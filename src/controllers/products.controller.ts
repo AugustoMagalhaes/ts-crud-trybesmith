@@ -3,17 +3,31 @@ import { StatusCodes } from 'http-status-codes';
 import ProductService from '../services/products.service';
 
 export default class ProductController {
-  private pService;
+  private productService;
 
   constructor() {
-    this.pService = new ProductService();
+    this.productService = new ProductService();
   }
+
+  public getAllProducts = async (req: Request, res: Response) => {
+    try {
+      const products = await this.productService.getAllProducts();
+
+      if (!products) throw new Error('Something went Wrong');
+
+      return res.status(StatusCodes.OK).json(products);
+    } catch (err) {
+      if (err instanceof Error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: err.message });
+      }
+    }
+  };
 
   public createProduct = async (req: Request, res: Response) => {
     const product = req.body;
 
     try {
-      const createdProduct = await this.pService.createProduct(product);
+      const createdProduct = await this.productService.createProduct(product);
 
       if (!createdProduct) throw new Error('Failed to Create Product');
 
