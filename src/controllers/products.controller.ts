@@ -15,11 +15,13 @@ export default class ProductController {
     try {
       const createdProduct = await this.pService.createProduct(product);
 
-      if (!createdProduct) throw new Error('wat');
+      if (!createdProduct) throw new Error('Failed to Create Product');
 
       return res.status(StatusCodes.CREATED).json(createdProduct);
-    } catch (err: any | unknown) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+    } catch (err) {
+      if (err instanceof Error) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      }
     }
   };
 }
